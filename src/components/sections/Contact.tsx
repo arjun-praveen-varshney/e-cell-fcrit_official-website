@@ -79,15 +79,15 @@ export function Contact() {
     {
       icon: Mail,
       title: "Email Us",
-      details: ["ecell@fcrit.ac.in", "info@ecell.fcrit.ac.in"],
+      details: ["ecellfcrit2425@gmail.com"],
       description: "Send us an email and we'll respond within 24 hours",
     },
-    {
-      icon: Phone,
-      title: "Call Us",
-      details: ["+91 98765 43210", "+91 87654 32109"],
-      description: "Available Monday to Friday, 9 AM to 6 PM",
-    },
+    // {
+    //   icon: Phone,
+    //   title: "Call Us",
+    //   details: ["+91 98765 43210", "+91 87654 32109"],
+    //   description: "Available Monday to Friday, 9 AM to 6 PM",
+    // },
     {
       icon: MapPin,
       title: "Visit Us",

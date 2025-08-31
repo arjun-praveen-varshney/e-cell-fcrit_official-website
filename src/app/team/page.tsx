@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { advisors } from "@/data/team";
 import Image from "next/image";
 import { Mail, Linkedin, Github, Trophy, Users, Star } from "lucide-react";
 import Link from "next/link";
@@ -22,21 +20,26 @@ import { TeamMember as SanityTeamMember } from "@/types";
 
 export default function TeamPage() {
   const [currentTeam, setCurrentTeam] = useState<SanityTeamMember[]>([]);
+  const [advisors, setAdvisors] = useState<SanityTeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCurrentTeam = async () => {
+    const fetchTeamData = async () => {
       try {
-        const data = await client.fetch(queries.getCurrentTeam);
-        setCurrentTeam(data);
+        const [currentTeamData, advisorsData] = await Promise.all([
+          client.fetch(queries.getCurrentTeam),
+          client.fetch(queries.getAdvisors),
+        ]);
+        setCurrentTeam(currentTeamData);
+        setAdvisors(advisorsData);
       } catch (error) {
-        console.error("Error fetching current team:", error);
+        console.error("Error fetching team data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCurrentTeam();
+    fetchTeamData();
   }, []);
   return (
     <div className="min-h-screen bg-gray-950">
@@ -91,50 +94,86 @@ export default function TeamPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {advisors.map((advisor) => (
-              <div
-                key={advisor.id}
-                className="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-500/50 transition-all duration-300"
-              >
-                <div className="relative w-24 h-24 mx-auto mb-4">
-                  <Image
-                    src={advisor.image}
-                    alt={advisor.name}
-                    fill
-                    className="rounded-full object-cover border-2 border-yellow-500/50"
-                  />
+            {loading ? (
+              [...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-800/50 rounded-xl p-6 animate-pulse"
+                >
+                  <div className="w-24 h-24 bg-gray-700 rounded-full mx-auto mb-4"></div>
+                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-700 rounded mb-4"></div>
+                  <div className="h-20 bg-gray-700 rounded"></div>
                 </div>
-
-                <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">
-                    {advisor.name}
-                  </h3>
-                  <p className="text-yellow-400 font-medium mb-2">
-                    {advisor.position}
-                  </p>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {advisor.department}
-                  </p>
-
-                  {advisor.bio && (
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      {advisor.bio}
-                    </p>
-                  )}
-
-                  {advisor.email && (
-                    <div className="mt-4 flex justify-center">
-                      <a
-                        href={`mailto:${advisor.email}`}
-                        className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                      >
-                        <Mail className="h-5 w-5" />
-                      </a>
-                    </div>
-                  )}
-                </div>
+              ))
+            ) : advisors.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-400 text-lg">
+                  No faculty advisors found.
+                </p>
               </div>
-            ))}
+            ) : (
+              advisors.map((advisor) => (
+                <div
+                  key={advisor._id}
+                  className="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-yellow-500/50 transition-all duration-300"
+                >
+                  <div className="relative w-24 h-24 mx-auto mb-4">
+                    {advisor.image && advisor.image.asset ? (
+                      <Image
+                        src={advisor.image.asset.url}
+                        alt={advisor.image.alt || advisor.name}
+                        fill
+                        className="rounded-full object-cover border-2 border-yellow-500/50"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                        {advisor.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">
+                      {advisor.name}
+                    </h3>
+                    <p className="text-yellow-400 font-medium mb-2">
+                      {advisor.position}
+                    </p>
+                    <p className="text-gray-400 text-sm mb-4">
+                      {advisor.department}
+                    </p>
+
+                    {advisor.bio && (
+                      <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                        {advisor.bio}
+                      </p>
+                    )}
+
+                    <div className="flex justify-center gap-3">
+                      {advisor.email && (
+                        <a
+                          href={`mailto:${advisor.email}`}
+                          className="text-yellow-400 hover:text-yellow-300 transition-colors"
+                        >
+                          <Mail className="h-5 w-5" />
+                        </a>
+                      )}
+                      {advisor.linkedin && (
+                        <a
+                          href={advisor.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-yellow-400 hover:text-blue-400 transition-colors"
+                        >
+                          <Linkedin className="h-5 w-5" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -165,8 +204,7 @@ export default function TeamPage() {
           ) : currentTeam.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-400 text-lg">
-                No current team members found. Please add team members in Sanity
-                Studio.
+                No current team members found.
               </p>
             </div>
           ) : (

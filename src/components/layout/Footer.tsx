@@ -104,13 +104,13 @@ export default function Footer() {
                 <div className="flex items-center text-gray-300">
                   <Mail className="w-4 h-4 mr-3 text-purple-400" />
                   <a
-                    href="mailto:ecell@fcrit.ac.in"
+                    href="mailto:ecellfcrit2425@gmail.com"
                     className="hover:text-purple-300 transition-colors duration-300"
                   >
-                    ecell@fcrit.ac.in
+                    ecellfcrit2425@gmail.com
                   </a>
                 </div>
-                <div className="flex items-center text-gray-300">
+                {/* <div className="flex items-center text-gray-300">
                   <Phone className="w-4 h-4 mr-3 text-purple-400" />
                   <a
                     href="tel:+919876543210"
@@ -118,7 +118,7 @@ export default function Footer() {
                   >
                     +91 98765 43210
                   </a>
-                </div>
+                </div> */}
                 <div className="flex items-start text-gray-300">
                   <MapPin className="w-4 h-4 mr-3 text-purple-400 mt-1 flex-shrink-0" />
                   <div>
