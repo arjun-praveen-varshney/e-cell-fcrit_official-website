@@ -2,6 +2,9 @@ export interface TeamMember {
   _id: string;
   name: string;
   position: string;
+  department: string;
+  year?: string;
+  memberType: "current" | "past" | "advisor";
   image?: {
     asset: {
       _id: string;
@@ -10,13 +13,13 @@ export interface TeamMember {
     alt?: string;
   };
   bio?: string;
+  achievements?: string[];
+  email?: string;
   linkedin?: string;
-  github?: string;
   instagram?: string;
-  category: "core" | "senior" | "junior" | "alumni" | "advisor";
-  memberType: "current" | "past" | "advisor";
-  joinYear: number;
-  skills?: string[];
+  github?: string;
+  currentRole?: string;
+  tenure?: string;
   order?: number;
 }
 

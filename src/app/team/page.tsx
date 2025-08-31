@@ -1,20 +1,43 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { currentTeam, pastTeam, advisors } from "@/data/team";
+import { advisors } from "@/data/team";
 import Image from "next/image";
 import { Mail, Linkedin, Github, Trophy, Users, Star } from "lucide-react";
 import Link from "next/link";
+import { client, queries } from "@/sanity/lib/client";
+import { TeamMember as SanityTeamMember } from "@/types";
 
-export const metadata: Metadata = {
-  title: "Team | E-Cell FCRIT",
-  description:
-    "Meet the passionate team of E-Cell FCRIT driving entrepreneurship and innovation in our college community.",
-  keywords:
-    "E-Cell team, FCRIT team, entrepreneurship team, student leadership, core committee",
-};
+// Hardcoded metadata since we can't export it from client component
+// export const metadata: Metadata = {
+//   title: "Team | E-Cell FCRIT",
+//   description:
+//     "Meet the passionate team of E-Cell FCRIT driving entrepreneurship and innovation in our college community.",
+//   keywords:
+//     "E-Cell team, FCRIT team, entrepreneurship team, student leadership, core committee",
+// };
 
 export default function TeamPage() {
+  const [currentTeam, setCurrentTeam] = useState<SanityTeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCurrentTeam = async () => {
+      try {
+        const data = await client.fetch(queries.getCurrentTeam);
+        setCurrentTeam(data);
+      } catch (error) {
+        console.error("Error fetching current team:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentTeam();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
@@ -42,14 +65,12 @@ export default function TeamPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-purple-500/20 rounded-xl p-6">
               <div className="text-3xl font-bold text-purple-400 mb-2">
-                {currentTeam.length}+
+                {loading ? "..." : `${currentTeam.length}+`}
               </div>
               <div className="text-gray-300">Current Members</div>
             </div>
             <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/20 rounded-xl p-6">
-              <div className="text-3xl font-bold text-blue-400 mb-2">
-                {pastTeam.length}+
-              </div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">50+</div>
               <div className="text-gray-300">Alumni</div>
             </div>
             <div className="bg-gradient-to-br from-pink-500/20 to-red-500/20 backdrop-blur-sm border border-pink-500/20 rounded-xl p-6">
@@ -127,96 +148,130 @@ export default function TeamPage() {
             </span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {currentTeam.map((member) => (
-              <div
-                key={member.id}
-                className="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300"
-              >
-                <div className="relative w-24 h-24 mx-auto mb-4">
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    fill
-                    className="rounded-full object-cover border-2 border-purple-500/50"
-                  />
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                    <Star className="h-3 w-3 text-white fill-current" />
-                  </div>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-800/50 rounded-xl p-6 animate-pulse"
+                >
+                  <div className="w-24 h-24 bg-gray-700 rounded-full mx-auto mb-4"></div>
+                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-700 rounded mb-4"></div>
+                  <div className="h-20 bg-gray-700 rounded"></div>
                 </div>
-
-                <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
-                    {member.name}
-                  </h3>
-                  <p className="text-purple-400 font-medium mb-2">
-                    {member.position}
-                  </p>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {member.department}
-                  </p>
-
-                  {member.bio && (
-                    <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
-                      {member.bio}
-                    </p>
-                  )}
-
-                  {member.achievements && member.achievements.length > 0 && (
-                    <div className="mb-4">
-                      <div className="flex items-center justify-center gap-1 mb-2">
-                        <Trophy className="h-4 w-4 text-yellow-400" />
-                        <span className="text-sm font-medium text-yellow-400">
-                          Key Achievements
-                        </span>
+              ))}
+            </div>
+          ) : currentTeam.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">
+                No current team members found. Please add team members in Sanity
+                Studio.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {currentTeam.map((member) => (
+                <div
+                  key={member._id}
+                  className="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300"
+                >
+                  <div className="relative w-24 h-24 mx-auto mb-4">
+                    {member.image && member.image.asset ? (
+                      <Image
+                        src={member.image.asset.url}
+                        alt={member.image.alt || member.name}
+                        fill
+                        className="rounded-full object-cover border-2 border-purple-500/50"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                        {member.name.charAt(0)}
                       </div>
-                      <ul className="text-xs text-gray-400 space-y-1">
-                        {member.achievements
-                          .slice(0, 2)
-                          .map((achievement, index) => (
-                            <li key={index} className="flex items-start gap-1">
-                              <span className="text-purple-400 mt-1">•</span>
-                              {achievement}
-                            </li>
-                          ))}
-                      </ul>
+                    )}
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <Star className="h-3 w-3 text-white fill-current" />
                     </div>
-                  )}
+                  </div>
 
-                  <div className="flex justify-center gap-3">
-                    {member.email && (
-                      <a
-                        href={`mailto:${member.email}`}
-                        className="text-gray-400 hover:text-purple-400 transition-colors"
-                      >
-                        <Mail className="h-4 w-4" />
-                      </a>
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
+                      {member.name}
+                    </h3>
+                    <p className="text-purple-400 font-medium mb-2">
+                      {member.position}
+                    </p>
+                    {member.department && (
+                      <p className="text-gray-400 text-sm mb-4">
+                        {member.department}
+                      </p>
                     )}
-                    {member.linkedin && (
-                      <a
-                        href={member.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-blue-400 transition-colors"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </a>
+
+                    {member.bio && (
+                      <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
+                        {member.bio}
+                      </p>
                     )}
-                    {member.github && (
-                      <a
-                        href={member.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-gray-300 transition-colors"
-                      >
-                        <Github className="h-4 w-4" />
-                      </a>
+
+                    {member.achievements && member.achievements.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex items-center justify-center gap-1 mb-2">
+                          <Trophy className="h-4 w-4 text-yellow-400" />
+                          <span className="text-sm font-medium text-yellow-400">
+                            Key Achievements
+                          </span>
+                        </div>
+                        <ul className="text-xs text-gray-400 space-y-1">
+                          {member.achievements
+                            .slice(0, 2)
+                            .map((achievement: string, index: number) => (
+                              <li
+                                key={index}
+                                className="flex items-start gap-1"
+                              >
+                                <span className="text-purple-400 mt-1">•</span>
+                                {achievement}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
                     )}
+
+                    <div className="flex justify-center gap-3">
+                      {member.email && (
+                        <a
+                          href={`mailto:${member.email}`}
+                          className="text-gray-400 hover:text-purple-400 transition-colors"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </a>
+                      )}
+                      {member.linkedin && (
+                        <a
+                          href={member.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-400 hover:text-blue-400 transition-colors"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                        </a>
+                      )}
+                      {member.github && (
+                        <a
+                          href={member.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-400 hover:text-gray-300 transition-colors"
+                        >
+                          <Github className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -308,9 +363,7 @@ export default function TeamPage() {
                 <h4 className="text-lg font-semibold text-white mb-2">
                   Application
                 </h4>
-                <p className="text-gray-300 text-sm">
-                  Submit your application with portfolio and motivational letter
-                </p>
+                <p className="text-gray-300 text-sm">Submit your application</p>
               </div>
 
               <div className="text-center">

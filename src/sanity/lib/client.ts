@@ -19,10 +19,97 @@ export function urlFor(source: any) {
 // GROQ queries for fetching data
 export const queries = {
   // Team queries
-  getAllTeamMembers: `*[_type == "teamMember"] | order(order asc, name asc)`,
-  getCurrentTeam: `*[_type == "teamMember" && memberType == "current"] | order(order asc, name asc)`,
-  getPastTeam: `*[_type == "teamMember" && memberType == "past"] | order(order asc, name asc)`,
-  getAdvisors: `*[_type == "teamMember" && memberType == "advisor"] | order(order asc, name asc)`,
+  getAllTeamMembers: `*[_type == "teamMember"] | order(order asc, name asc) {
+    _id,
+    name,
+    position,
+    department,
+    year,
+    memberType,
+    image {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    bio,
+    achievements[],
+    email,
+    linkedin,
+    instagram,
+    github,
+    currentRole,
+    tenure,
+    order
+  }`,
+  getCurrentTeam: `*[_type == "teamMember" && memberType == "current"] | order(order asc, name asc) {
+    _id,
+    name,
+    position,
+    department,
+    year,
+    memberType,
+    image {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    bio,
+    achievements[],
+    email,
+    linkedin,
+    instagram,
+    github,
+    order
+  }`,
+  getPastTeam: `*[_type == "teamMember" && memberType == "past"] | order(order asc, name asc) {
+    _id,
+    name,
+    position,
+    department,
+    year,
+    memberType,
+    image {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    bio,
+    achievements[],
+    email,
+    linkedin,
+    instagram,
+    github,
+    currentRole,
+    tenure,
+    order
+  }`,
+  getAdvisors: `*[_type == "teamMember" && memberType == "advisor"] | order(order asc, name asc) {
+    _id,
+    name,
+    position,
+    department,
+    year,
+    memberType,
+    image {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    bio,
+    email,
+    linkedin,
+    instagram,
+    github,
+    order
+  }`,
 
   // Event queries
   getAllEvents: `*[_type == "event"] | order(date desc){
