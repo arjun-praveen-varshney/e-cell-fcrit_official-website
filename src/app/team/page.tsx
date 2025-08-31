@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import { currentTeam, pastTeam, advisors } from "@/data/team";
 import Image from "next/image";
 import { Mail, Linkedin, Github, Trophy, Users, Star } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Team | E-Cell FCRIT",
@@ -41,7 +42,7 @@ export default function TeamPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-purple-500/20 rounded-xl p-6">
               <div className="text-3xl font-bold text-purple-400 mb-2">
-                {currentTeam.length}
+                {currentTeam.length}+
               </div>
               <div className="text-gray-300">Current Members</div>
             </div>
@@ -52,7 +53,7 @@ export default function TeamPage() {
               <div className="text-gray-300">Alumni</div>
             </div>
             <div className="bg-gradient-to-br from-pink-500/20 to-red-500/20 backdrop-blur-sm border border-pink-500/20 rounded-xl p-6">
-              <div className="text-3xl font-bold text-pink-400 mb-2">4</div>
+              <div className="text-3xl font-bold text-pink-400 mb-2">5</div>
               <div className="text-gray-300">Departments</div>
             </div>
           </div>
@@ -220,7 +221,7 @@ export default function TeamPage() {
       </section>
 
       {/* Past Team Section */}
-      <section className="py-16 px-4">
+      {/* <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             <span className="bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-transparent">
@@ -283,7 +284,7 @@ export default function TeamPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Selection Process */}
       <section className="py-16 px-4">
@@ -341,16 +342,18 @@ export default function TeamPage() {
               <h4 className="text-lg font-semibold text-white mb-4">
                 Requirements:
               </h4>
-              <ul className="text-gray-300 space-y-2 mb-6">
+              <ul className="text-gray-300 space-y-2 mb-6 text-left mx-auto w-fit">
                 <li>• Passion for entrepreneurship and innovation</li>
                 <li>• Strong communication and leadership skills</li>
                 <li>• Commitment to contribute to E-Cell activities</li>
-                <li>• Academic performance (minimum 7.0 CGPA)</li>
+                <li>• Academic performance</li>
               </ul>
 
-              <button className="bg-gradient-to-r from-green-500 to-blue-500 text-white font-medium py-3 px-8 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-300">
-                Apply Now
-              </button>
+              <Link href="/#contact">
+                <button className="bg-gradient-to-r from-green-500 to-blue-500 text-white font-medium py-3 px-8 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-300">
+                  Apply Now
+                </button>
+              </Link>
             </div>
           </div>
         </div>

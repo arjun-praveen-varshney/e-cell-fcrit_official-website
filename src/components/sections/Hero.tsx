@@ -21,7 +21,7 @@ export function Hero() {
       description:
         "From ideation to execution, we provide the complete ecosystem for budding entrepreneurs.",
       cta: "Start Building",
-      highlight: "100+ Startups Mentored",
+      highlight: "35+ Startups Mentored",
     },
     {
       title: "Events & Workshops",
@@ -29,7 +29,7 @@ export function Hero() {
       description:
         "Regular workshops, hackathons, and speaker sessions with successful entrepreneurs and industry experts.",
       cta: "View Events",
-      highlight: "50+ Industry Experts",
+      highlight: "10+ Industry Experts",
     },
   ];
 

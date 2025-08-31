@@ -1,17 +1,18 @@
 import { type SchemaTypeDefinition } from "sanity";
-
 import eventType from "./event";
 import teamMemberType from "./teamMember";
-import testimonialType from "./testimonial";
 import siteSettingsType from "./siteSettings";
-import linkedinPost from "../schemas/linkedinPost";
+import speaker from "./speaker";
+import sponsor from "./sponsor";
+import contactSubmission from "./contactSubmission";
 
-export const schema = {
+export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     eventType,
     teamMemberType,
-    testimonialType,
     siteSettingsType,
-    linkedinPost,
+    speaker,
+    sponsor,
+    contactSubmission,
   ],
 };

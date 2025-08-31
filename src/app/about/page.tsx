@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import Image from "next/image";
+// import Image from "next/image";
 import {
   Lightbulb,
   Users,
@@ -14,6 +14,7 @@ import {
   Building2,
   Calendar,
 } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About Us | E-Cell FCRIT",
@@ -126,12 +127,15 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="relative h-96 rounded-2xl overflow-hidden">
-                <Image
-                  src="/media/ecell_logo3.png"
-                  alt="E-Cell FCRIT"
-                  fill
-                  className="object-contain"
+              <div className="relative flex justify-center rounded-2xl">
+                <video
+                  src="/esummit-24.mov"
+                  // alt="E-Cell FCRIT"
+                  // fill
+                  muted
+                  autoPlay
+                  loop
+                  className="h-[36rem] object-contain"
                 />
               </div>
             </div>
@@ -142,9 +146,11 @@ export default function AboutPage() {
                   Our Mission
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
-                  To create a thriving ecosystem for student entrepreneurs by
-                  providing mentorship, resources, and platforms that enable
-                  them to transform innovative ideas into successful ventures.
+                  Our mission is to provide the resources, mentorship, and
+                  support needed to turn innovative concepts into sustainable
+                  businesses, driving economic growth and positive social
+                  impact. Join us as we shape the future, one groundbreaking
+                  idea at a time.
                 </p>
               </div>
 
@@ -153,10 +159,11 @@ export default function AboutPage() {
                   Our Vision
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
-                  To establish FCRIT as a leading hub for student
-                  entrepreneurship and innovation, contributing to the national
-                  startup ecosystem and creating job creators rather than job
-                  seekers.
+                  Our vision is to foster a culture of innovation and
+                  entrepreneurship, empowering individuals to transform their
+                  creative ideas into successful ventures. We are committed to
+                  creating a dynamic ecosystem where aspiring entrepreneurs can
+                  thrive, collaborate, and achieve their full potential.
                 </p>
               </div>
             </div>
@@ -376,12 +383,16 @@ export default function AboutPage() {
               have a developed idea, we're here to support you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-3 px-8 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
-                Join Our Community
-              </button>
-              <button className="border border-purple-500 text-purple-400 font-medium py-3 px-8 rounded-lg hover:bg-purple-500/20 transition-all duration-300">
-                Contact Us
-              </button>
+              <Link href="/#contact">
+                <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-3 px-8 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                  Join Our Community
+                </button>
+              </Link>
+              <Link href="/#contact">
+                <button className="border border-purple-500 text-purple-400 font-medium py-3 px-8 rounded-lg hover:bg-purple-500/20 transition-all duration-300">
+                  Contact Us
+                </button>
+              </Link>
             </div>
           </div>
         </div>

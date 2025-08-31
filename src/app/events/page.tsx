@@ -1,17 +1,12 @@
-import { Metadata } from "next";
+"use client";
+
+import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { client, queries, urlFor } from "@/sanity/lib/client";
 import Image from "next/image";
+import Link from "next/link";
 import { Calendar, MapPin, Users, Trophy, ExternalLink } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Events | E-Cell FCRIT",
-  description:
-    "Explore all past and upcoming events organized by E-Cell FCRIT including E-Summit, Ideathon, Agnethon, and workshops.",
-  keywords:
-    "E-Cell events, FCRIT events, entrepreneurship events, E-Summit, Ideathon, Agnethon, startup events",
-};
 
 interface Event {
   _id: string;
@@ -30,18 +25,24 @@ interface Event {
   };
 }
 
-async function getEvents(): Promise<Event[]> {
-  try {
-    const events = await client.fetch(queries.getAllEvents);
-    return events || [];
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    return [];
-  }
-}
+export default function EventsPage() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function EventsPage() {
-  const events = await getEvents();
+  useEffect(() => {
+    const getEvents = async () => {
+      try {
+        const fetchedEvents = await client.fetch(queries.getAllEvents);
+        setEvents(fetchedEvents || []);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getEvents();
+  }, []);
   const categories = ["all", "summit", "hackathon", "workshop", "competition"];
 
   const getEventsByCategory = (category: string) => {
@@ -51,6 +52,37 @@ export default async function EventsPage() {
 
   const upcomingEvents = events.filter((event) => event.status === "upcoming");
   const pastEvents = events.filter((event) => event.status === "completed");
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950">
+        <Navbar />
+        <div className="pt-20 pb-16 px-4">
+          <div className="max-w-7xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                Loading Events...
+              </span>
+            </h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-800 rounded-xl p-6 animate-pulse"
+                >
+                  <div className="w-full h-48 bg-gray-700 rounded mb-4"></div>
+                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-700 rounded mb-4"></div>
+                  <div className="h-20 bg-gray-700 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -84,11 +116,11 @@ export default async function EventsPage() {
               <div className="text-gray-300">Events Organized</div>
             </div>
             <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/20 rounded-xl p-6">
-              <div className="text-3xl font-bold text-blue-400 mb-2">5000+</div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">500+</div>
               <div className="text-gray-300">Participants</div>
             </div>
             <div className="bg-gradient-to-br from-pink-500/20 to-red-500/20 backdrop-blur-sm border border-pink-500/20 rounded-xl p-6">
-              <div className="text-3xl font-bold text-pink-400 mb-2">50+</div>
+              <div className="text-3xl font-bold text-pink-400 mb-2">10+</div>
               <div className="text-gray-300">Industry Speakers</div>
             </div>
           </div>
@@ -163,10 +195,13 @@ export default async function EventsPage() {
                       )}
                     </div>
 
-                    <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-2 px-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center gap-2">
+                    <Link
+                      href="#contact"
+                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-2 px-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center gap-2"
+                    >
                       Register Now
                       <ExternalLink className="h-4 w-4" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -259,17 +294,19 @@ export default async function EventsPage() {
                     </div>
                   )}
 
-                  <button
-                    onClick={() => {
-                      if (event.slug) {
-                        window.location.href = `/events/${event.slug.current}`;
-                      }
-                    }}
-                    className="w-full bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium py-2 px-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300 flex items-center justify-center gap-2"
-                  >
-                    View Details
-                    <ExternalLink className="h-4 w-4" />
-                  </button>
+                  {event.slug ? (
+                    <Link
+                      href={`/events/${event.slug.current}`}
+                      className="w-full bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium py-2 px-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      View Details
+                      <ExternalLink className="h-4 w-4" />
+                    </Link>
+                  ) : (
+                    <div className="w-full bg-gray-600 text-gray-400 font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                      Details Coming Soon
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -289,30 +326,20 @@ export default async function EventsPage() {
               opportunities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => {
-                  const contactSection = document.getElementById("contact");
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: "smooth" });
-                  } else {
-                    window.location.href = "/#contact";
-                  }
-                }}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-3 px-8 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+              <Link
+                href="https://instagram.com/ecellfcrit/"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-3 px-8 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 text-center"
               >
-                Join Our Newsletter
-              </button>
-              <button
-                onClick={() =>
-                  window.open(
-                    "https://www.linkedin.com/company/fcrit-entrepreneurship-cell/",
-                    "_blank"
-                  )
-                }
-                className="border border-purple-500 text-purple-400 font-medium py-3 px-8 rounded-lg hover:bg-purple-500/20 transition-all duration-300"
+                Follow on Instagram
+              </Link>
+              <Link
+                href="https://www.linkedin.com/company/fcrit-entrepreneurship-cell/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-purple-500 text-purple-400 font-medium py-3 px-8 rounded-lg hover:bg-purple-500/20 transition-all duration-300 text-center"
               >
-                Follow on Social Media
-              </button>
+                Follow on LinkedIn
+              </Link>
             </div>
           </div>
         </div>

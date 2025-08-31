@@ -1,21 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar, Users, Trophy, Rocket } from "lucide-react";
+import { Calendar, Users, Heart, Rocket } from "lucide-react";
 
 export function Counter() {
   const [counts, setCounts] = useState({
     events: 0,
     students: 0,
     startups: 0,
-    years: 0,
+    socialReach: 0,
   });
 
   const targetCounts = {
-    events: 50,
-    students: 500,
-    startups: 15,
-    years: 6,
+    events: 15,
+    students: 5000,
+    startups: 35,
+    socialReach: 10000,
   };
 
   useEffect(() => {
@@ -50,14 +50,14 @@ export function Counter() {
       count: counts.events,
       suffix: "+",
       label: "Events Conducted",
-      description: "Workshops, hackathons, and speaker sessions",
+      description: "Ideathons and speaker sessions",
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: Users,
       count: counts.students,
       suffix: "+",
-      label: "Students Impacted",
+      label: "Community",
       description: "Young minds inspired to innovate",
       color: "from-purple-500 to-pink-500",
     },
@@ -70,11 +70,11 @@ export function Counter() {
       color: "from-green-500 to-teal-500",
     },
     {
-      icon: Trophy,
-      count: counts.years,
-      suffix: "",
-      label: "Years of Excellence",
-      description: "Building the entrepreneurial ecosystem",
+      icon: Heart,
+      count: counts.socialReach,
+      suffix: "+",
+      label: "Social Reach",
+      description: "Our entrepreneurial ecosystem",
       color: "from-orange-500 to-red-500",
     },
   ];
@@ -163,7 +163,7 @@ export function Counter() {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-20 text-center">
+        {/* <div className="mt-20 text-center">
           <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl p-8 border border-purple-500/20">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
               Join Our Growing Community
@@ -182,7 +182,7 @@ export function Counter() {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

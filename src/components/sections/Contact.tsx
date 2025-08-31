@@ -41,16 +41,38 @@ export function Contact() {
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      console.log("Submitting form data:", data);
 
-    console.log("Form submitted:", data);
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    reset();
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    // Reset success message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000);
+      const result = await response.json();
+      console.log("API response:", result);
+
+      if (result.success) {
+        setIsSubmitted(true);
+        reset();
+        console.log("Form submitted successfully with ID:", result.id);
+
+        // Reset success message after 5 seconds
+        setTimeout(() => setIsSubmitted(false), 5000);
+      } else {
+        console.error("Form submission failed:", result.error);
+        // You might want to show an error message to the user here
+        alert("Failed to submit form: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred while submitting the form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -286,7 +308,7 @@ export function Contact() {
             </div>
 
             {/* Quick Actions */}
-            <div>
+            {/* <div>
               <h3 className="text-2xl font-bold text-white mb-6">
                 Quick Actions
               </h3>
@@ -317,10 +339,10 @@ export function Contact() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Office Hours */}
-            <div className="p-6 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700/50">
+            {/* <div className="p-6 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700/50">
               <h4 className="font-semibold text-white mb-4">Office Hours</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -336,12 +358,12 @@ export function Contact() {
                   <span className="text-gray-500">Closed</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* Map Section */}
-        <div className="mt-16">
+        {/* <div className="mt-16">
           <h3 className="text-2xl font-bold text-white mb-6 text-center">
             Find Us
           </h3>
@@ -358,7 +380,7 @@ export function Contact() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

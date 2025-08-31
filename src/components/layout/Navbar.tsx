@@ -33,7 +33,7 @@ export default function Navbar() {
 
   const menuItems = [
     { name: "Home", href: "/" },
-    { name: "About", href: "/#about", hasPage: true, pageHref: "/about" },
+    { name: "About", href: "/about" },
     { name: "Events", href: "/events" },
     { name: "Team", href: "/team" },
     { name: "Posts", href: "/posts" },
@@ -44,30 +44,31 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-sm z-50 border-b border-purple-500/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">E</span>
-            </div>
-            <div className="text-white">
-              <div className="font-bold text-lg">E-CELL</div>
-              <div className="text-xs text-gray-300">FCRIT</div>
-            </div>
+          {/* E-Cell Logo - Left */}
+          <div className="flex items-center">
+            <img
+              src="/ecell-logo-removebg-preview.png"
+              alt="Ecell Logo"
+              className="w-24 h-24"
+            />
           </div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {menuItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => handleNavigation(item.href)}
-                  className="text-gray-300 hover:text-purple-400 px-3 py-2 text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                  {item.name}
-                </button>
-              ))}
-            </div>
+          {/* Desktop Menu - Center */}
+          <div className="hidden md:flex items-center space-x-8">
+            {menuItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => handleNavigation(item.href)}
+                className="text-gray-300 hover:text-purple-400 px-3 py-2 text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105"
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+
+          {/* IIC Logo - Right (Desktop) */}
+          <div className="hidden md:flex items-center">
+            <img src="/iic-logo.webp" alt="IIC logo" className="h-12" />
           </div>
 
           {/* Mobile menu button */}
@@ -95,6 +96,10 @@ export default function Navbar() {
                 {item.name}
               </button>
             ))}
+            {/* IIC Logo in mobile menu */}
+            <div className="px-3 py-2 flex justify-center">
+              <img src="/iic-logo.webp" alt="IIC logo" className="h-8" />
+            </div>
           </div>
         </div>
       )}

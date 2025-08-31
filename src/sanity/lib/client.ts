@@ -25,26 +25,153 @@ export const queries = {
   getAdvisors: `*[_type == "teamMember" && memberType == "advisor"] | order(order asc, name asc)`,
 
   // Event queries
-  getAllEvents: `*[_type == "event"] | order(date desc)`,
+  getAllEvents: `*[_type == "event"] | order(date desc){
+    _id,
+    title,
+    description,
+    date,
+    endDate,
+    location,
+    participants,
+    category,
+    status,
+    featured,
+    image,
+    highlights,
+    slug,
+    gallery,
+    speakers,
+    sponsors
+  }`,
   getUpcomingEvents: `*[_type == "event" && status == "upcoming"] | order(date asc)`,
   getPastEvents: `*[_type == "event" && status == "completed"] | order(date desc)`,
   getFeaturedEvents: `*[_type == "event" && featured == true] | order(date desc)[0...3]`,
   getEventBySlug: (slug: string) =>
-    `*[_type == "event" && slug.current == "${slug}"][0]`,
+    `*[_type == "event" && slug.current == "${slug}"][0]{
+      ...,
+      speakers[]-> {
+        _id,
+        name,
+        designation,
+        company,
+        bio,
+        image,
+        linkedin,
+        twitter,
+        expertise[]
+      },
+      sponsors[]-> {
+        _id,
+        name,
+        logo,
+        website,
+        category,
+        description
+      }
+    }`,
 
-  // Blog queries
-  getAllBlogPosts: `*[_type == "blogPost"] | order(publishedAt desc)`,
-  getFeaturedBlogPosts: `*[_type == "blogPost" && featured == true] | order(publishedAt desc)[0...3]`,
-  getBlogPostBySlug: (
-    slug: string
-  ) => `*[_type == "blogPost" && slug.current == "${slug}"][0]{
-    ...,
-    author->
+  // Sponsor queries
+  getAllSponsors: `*[_type == "sponsor"] | order(order asc, name asc) {
+    _id,
+    name,
+    logo {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    category,
+    website,
+    description,
+    yearPartnered,
+    active,
+    featured,
+    order
   }`,
+  getFeaturedSponsors: `*[_type == "sponsor" && featured == true] | order(order asc)[0...8] {
+    _id,
+    name,
+    logo {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    category,
+    website,
+    description,
+    yearPartnered,
+    active
+  }`,
+  getActiveSponsors: `*[_type == "sponsor" && active == true] | order(order asc, name asc) {
+    _id,
+    name,
+    logo {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    category,
+    website,
+    description,
+    yearPartnered
+  }`,
+  getSponsorsByCategory: (category: string) =>
+    `*[_type == "sponsor" && category == "${category}"] | order(order asc, name asc)`,
 
-  // Testimonial queries
-  getAllTestimonials: `*[_type == "testimonial"] | order(order asc, _createdAt desc)`,
-  getFeaturedTestimonials: `*[_type == "testimonial" && featured == true] | order(order asc)[0...6]`,
+  // Speaker queries
+  getAllSpeakers: `*[_type == "speaker"] | order(order asc, name asc) {
+    _id,
+    name,
+    role,
+    company,
+    bio,
+    image {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    socialMedia,
+    expertise[],
+    achievements[],
+    testimonial,
+    eventsSpokeAt[]-> {
+      _id,
+      title,
+      slug
+    },
+    featured,
+    order
+  }`,
+  getFeaturedSpeakers: `*[_type == "speaker" && featured == true] | order(order asc)[0...6] {
+    _id,
+    name,
+    role,
+    company,
+    bio,
+    image {
+      asset -> {
+        _id,
+        url
+      },
+      alt
+    },
+    socialMedia,
+    expertise[],
+    achievements[],
+    testimonial,
+    eventsSpokeAt[]-> {
+      _id,
+      title,
+      slug
+    }
+  }`,
 
   // Site settings
   getSiteSettings: `*[_type == "siteSettings"][0]`,

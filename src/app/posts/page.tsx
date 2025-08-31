@@ -14,6 +14,7 @@ import {
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
+import Navbar from "@/components/layout/Navbar";
 
 const categories = [
   { title: "All", value: "all" },
@@ -94,6 +95,7 @@ export default function PostsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black pt-20">
+      <Navbar />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Page Header */}
         <div className="text-center mb-12">

@@ -1,86 +1,107 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { createClient } from "next-sanity";
+import { apiVersion, dataset, projectId } from "@/sanity/env";
 
-// Contact form validation schema
-const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+// Create a client with write permissions for server-side operations
+const writeClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false, // Don't use CDN for write operations
+  token: process.env.SANITY_API_TOKEN, // Write token from environment
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const { name, email, subject, message, phone, type = "general" } = body;
 
-    // Validate the form data
-    const validatedData = contactSchema.parse(body);
-
-    // In a real application, you would:
-    // 1. Save to database
-    // 2. Send email notification
-    // 3. Log the submission
-
-    // For now, we'll simulate database save and email sending
-    console.log("Contact form submission:", validatedData);
-
-    // Simulate email sending
-    await sendEmailNotification(validatedData);
-
-    // Simulate database save
-    await saveContactSubmission(validatedData);
-
-    return NextResponse.json(
-      {
-        message: "Thank you for your message! We'll get back to you soon.",
-        success: true,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+    // Validate required fields
+    if (!name || !email || !message) {
       return NextResponse.json(
         {
-          message: "Validation error",
-          errors: error.issues,
           success: false,
+          error: "Name, email, and message are required fields",
         },
         { status: 400 }
       );
     }
 
-    console.error("Contact form error:", error);
+    // Create contact submission in Sanity
+    const contactSubmission = {
+      _type: "contactSubmission",
+      name,
+      email,
+      subject: subject || "Contact Form Submission",
+      phone: phone || "",
+      message,
+      type,
+      submittedAt: new Date().toISOString(),
+      status: "new",
+    };
+
+    const result = await writeClient.create(contactSubmission);
+
+    // Log the submission for tracking
+    // console.log("New contact form submission:", {
+    //   id: result._id,
+    //   name,
+    //   email,
+    //   subject: subject || "Contact Form Submission",
+    //   type,
+    //   submittedAt: new Date().toISOString(),
+    // });
+
+    return NextResponse.json({
+      success: true,
+      message: "Thank you for your message! We will get back to you soon.",
+      id: result._id,
+    });
+  } catch (error) {
+    console.error("Contact form submission error:", error);
     return NextResponse.json(
       {
-        message: "Something went wrong. Please try again later.",
         success: false,
+        error: "Failed to submit contact form. Please try again later.",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
   }
 }
 
-async function sendEmailNotification(data: z.infer<typeof contactSchema>) {
-  // Mock email sending
-  // In production, use services like SendGrid, AWS SES, or Nodemailer
-  console.log("Sending email notification:", {
-    to: "ecell@fcrit.ac.in",
-    subject: `New Contact Form Submission: ${data.subject}`,
-    content: `
-      Name: ${data.name}
-      Email: ${data.email}
-      Subject: ${data.subject}
-      Message: ${data.message}
-    `,
-  });
-}
+export async function GET() {
+  try {
+    // Fetch all contact submissions (for admin purposes)
+    const submissions = await writeClient.fetch(`
+      *[_type == "contactSubmission"] | order(submittedAt desc) {
+        _id,
+        name,
+        email,
+        subject,
+        phone,
+        message,
+        type,
+        submittedAt,
+        status
+      }
+    `);
 
-async function saveContactSubmission(data: z.infer<typeof contactSchema>) {
-  // Mock database save
-  // In production, save to your preferred database (PostgreSQL, MongoDB, etc.)
-  console.log("Saving to database:", {
-    ...data,
-    submittedAt: new Date().toISOString(),
-    status: "new",
-  });
+    return NextResponse.json({
+      success: true,
+      submissions,
+      total: submissions.length,
+      message: "Contact submissions retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching contact submissions:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to fetch contact submissions",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }

@@ -5,7 +5,8 @@ import { Counter } from "@/components/sections/Counter";
 import { Events } from "@/components/sections/Events";
 import { Team } from "@/components/sections/Team";
 import { LinkedInFeed } from "@/components/sections/LinkedInFeed";
-import { Testimonials } from "@/components/sections/Testimonials";
+import { Speakers } from "@/components/sections/Speakers";
+import { Sponsors } from "@/components/sections/Sponsors";
 import { Contact } from "@/components/sections/Contact";
 import Footer from "@/components/layout/Footer";
 
@@ -17,9 +18,10 @@ export default function Home() {
       <About />
       <Counter />
       <Events />
-      <Team />
+      {/* <Team /> */}
       <LinkedInFeed />
-      <Testimonials />
+      <Speakers />
+      <Sponsors />
       <Contact />
       <Footer />
     </div>
